@@ -15,6 +15,7 @@ s3_bucket_id
 *_bak
 /scripts/keybase_amd64.deb
 es-eks-*
+config_es-*
 info
 _data
 tz-eks-backup*
