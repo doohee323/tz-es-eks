@@ -27,3 +27,7 @@ bash /vagrant/tz-local/resource/elk/install.sh
 
 exit 0
 
+bash /vagrant/tz-local/resource/elk/reindex/ubuntu.sh
+bash /vagrant/tz-local/resource/elk/reindex/run.sh
+
+

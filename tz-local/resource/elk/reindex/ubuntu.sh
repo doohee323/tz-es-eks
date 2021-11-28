@@ -45,6 +45,8 @@ kubectl -n devops-dev exec -it bastion -- chown root:root /etc/filebeat/filebeat
 kubectl cp filebeat_new.yml devops-dev/bastion:/etc/filebeat02/filebeat.yml
 kubectl -n devops-dev exec -it bastion -- chown root:root /etc/filebeat02/filebeat.yml
 
+exit 0
+
 # run filebeat for current
 kubectl -n devops-dev exec -it bastion -- filebeat -e -d "*"
 kubectl -n devops-dev exec -it bastion -- /bin/bash /data/test.sh current

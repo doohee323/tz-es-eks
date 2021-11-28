@@ -47,6 +47,8 @@ helm upgrade --debug --install --reuse-values -f es_values.yaml_bak elasticsearc
 
 k patch statefulset/elasticsearch-master -p '{"spec": {"template": {"spec": {"nodeSelector": {"team": "devops"}}}}}'
 k patch statefulset/elasticsearch-master -p '{"spec": {"template": {"spec": {"nodeSelector": {"environment": "elk"}}}}}'
+sleep 60
+
 kubectl rollout restart statefulset.apps/elasticsearch-master -n ${NS}
 #k get pods | grep elasticsearch-master | awk '{print $1}' | xargs kubectl -n ${NS} delete pod
 kubectl get csr -o name | xargs kubectl certificate approve
@@ -59,12 +61,12 @@ sed -i "s/ADMIN_PASSWORD/${admin_password}/g" es_data_values.yaml_bak
 helm upgrade --debug --install --reuse-values -f es_data_values.yaml_bak elasticsearch-data elastic/elasticsearch --version ${STACK_VERSION} -n ${NS}
 k patch statefulset/elasticsearch-data -p '{"spec": {"template": {"spec": {"nodeSelector": {"team": "devops"}}}}}'
 k patch statefulset/elasticsearch-data -p '{"spec": {"template": {"spec": {"nodeSelector": {"environment": "elk"}}}}}'
+sleep 60
 kubectl rollout restart statefulset.apps/elasticsearch-data -n ${NS}
 
 #kubectl -n ${NS} port-forward svc/elasticsearch-master 9200
 #curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.es-eks.ejntest.com
-
-sleep 60
+sleep 30
 
 #helm test elasticsearch -n ${NS}
 cp kb_values.yaml kb_values.yaml_bak
