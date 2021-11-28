@@ -1,0 +1,85 @@
+filebeat.config.inputs:
+  enabled: true
+  path: inputs.d/*.yml
+
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /data/csv/*-*.csv
+#  fields:
+#    account: "487604454824"
+#- type: log
+#  enabled: true
+#  paths:
+#    - /data/csv/487604454824-*.csv
+#  fields:
+#    account: "487604454824"
+
+filebeat.config.modules:
+  path: /etc/filebeat/modules.d/*.yml
+  reload.enabled: false
+
+setup.template:
+  enabled: false
+  settings:
+    index.number_of_shards: 2
+
+setup.kibana:
+  host: "kibana.elk.svc.cluster.local:5601"
+
+output.elasticsearch:
+  protocol: https
+  ssl.verification_mode: none
+  hosts: ["elasticsearch-master.elk.svc.cluster.local:9200"]
+  username: 'elastic'
+  password: 'Dlwpdldps!323'
+  pipeline: aws_usage
+#  index: "aws_usage-%{[fields.account]}-%{+yyyyMM}"
+#  index: "aws_usage-%{[source]}"
+#  setup.template.name: "filebeat"
+#  setup.template.pattern: "filebeat-*"
+
+  index: "aws_usage-%{[dissect.account]}-%{[dissect.yyyymm]}"
+
+#  index: "aws_usage-%{+yyyyMM}"
+#  indices:
+#    - index: "aws_usage-487604454824-yyyymm"
+#      when.contains:
+#        fields:
+#          account: "487604454824"
+#    - index: "aws_usage-487604454824-yyyymm"
+#      when.contains:
+#        fields:
+#          account: "487604454824"
+
+#output.logstash:
+#  protocol: http
+#  hosts: ["logstash-logstash.elk.svc.cluster.local:5044"]
+
+#processors:
+#  - add_host_metadata:
+#      when.not.contains.tags: forwarded
+#  - add_cloud_metadata: ~
+#  - add_docker_metadata: ~
+#  - add_kubernetes_metadata: ~
+
+processors:
+  - decode_csv_fields:
+      fields:
+        message: decoded.csv
+      separator: ","
+      ignore_missing: false
+      overwrite_keys: true
+      trim_leading_space: false
+      fail_on_error: true
+
+  - dissect:
+      field: log.file.path
+      tokenizer: "/data/csv/%{account}-%{yyyymm}.csv"
+
+logging.level: debug
+monitoring.enabled: false
+
+setup.ilm.enabled: false
+
