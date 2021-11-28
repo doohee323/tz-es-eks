@@ -23,25 +23,25 @@ locals {
 
   map_roles = [
     {
-      rolearn  = "arn:aws:iam::215559030652:role/es-eks-xxxx"
-      username = "es-eks-xxxx"
+      rolearn  = "arn:aws:iam::aws_account_id:role/ELK_EKS_ROLE"
+      username = "ELK_EKS_ROLE"
       groups   = ["system:masters"]
     },
   ]
 
   map_users = [
     {
-      userarn  = "arn:aws:iam::215559030652:user/devops"
+      userarn  = "arn:aws:iam::aws_account_id:user/devops"
       username = "devops"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::215559030652:user/adminuser"
+      userarn  = "arn:aws:iam::aws_account_id:user/adminuser"
       username = "adminuser"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::215559030652:user/doohee.hong"
+      userarn  = "arn:aws:iam::aws_account_id:user/doohee.hong"
       username = "doohee.hong"
       groups   = ["system:masters"]
     },
