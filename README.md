@@ -74,10 +74,11 @@ TZ's main eks cluster with terraform
     terraform-aws-eks/workspace/base/locals.tf
 ```
 
-## https://weaveworks-gitops.awsworkshop.io/
-## https://tf-eks-workshop.workshop.aws/000_workshop_introduction.html
-## https://itnext.io/a-kubefed-tutorial-to-synchronise-k8s-clusters-86108194ed79
-## https://betterprogramming.pub/build-a-federation-of-multiple-kubernetes-clusters-with-kubefed-v2-8d2f7d9e198a
-## https://www.youtube.com/watch?v=PSwLdpH0vak
+## Test re-indexing in ES
+```
+    # make a bastion for testing env.
+    bash /vagrant/tz-local/resource/elk/reindex/ubuntu.sh
 
-
+    # test re-indexing with filebeat
+    bash /vagrant/tz-local/resource/elk/reindex/run.sh
+```
