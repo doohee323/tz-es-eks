@@ -125,7 +125,7 @@ service:
 #  annotations:
 #    kubernetes.io/ingress.class: "nginx"
 #  hosts:
-#    - host: kibana.elk.eks_project.ejntest.com
+#    - host: kibana.elk.eks_project.tztest.com
 #      paths:
 #      - path: /
 #        backend:

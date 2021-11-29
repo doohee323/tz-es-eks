@@ -1,10 +1,10 @@
-curl -XGET -u 'elastic:tzcorp!323' 'https://es.ejntest.com/_template/stats_t1*?pretty'
+curl -XGET -u 'elastic:tzcorp!323' 'https://es.tztest.com/_template/stats_t1*?pretty'
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.ejntest.com/_template/stats_t1?pretty'
+curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/_template/stats_t1?pretty'
 
 # "template": "stats*", : stats로 시작되는 index가 생성될 때 자동 적용됨
 
-curl -XPUT -H 'Content-Type: application/json' -u 'elastic:tzcorp!323' 'https://es.ejntest.com/_template/stats_t1?pretty' -d'
+curl -XPUT -H 'Content-Type: application/json' -u 'elastic:tzcorp!323' 'https://es.tztest.com/_template/stats_t1?pretty' -d'
 {
   "index_patterns": ["stats-201*"],
   "settings": {

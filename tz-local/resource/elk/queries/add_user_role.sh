@@ -5,8 +5,8 @@ function prop {
 }
 admin_password=$(prop 'project' 'admin_password')
 
-curl -XDELETE -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/role/logstash_writer'
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/role/logstash_writer' -d '
+curl -XDELETE -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/role/logstash_writer'
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/role/logstash_writer' -d '
 {
   "cluster": ["manage_index_templates", "monitor", "all"],
   "indices": [
@@ -26,10 +26,10 @@ curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'h
 }'
 
 
-curl -XGET -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/role/logstash_writer'
+curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/role/logstash_writer'
 
-curl -XDELETE -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_internal'
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_internal' -d '
+curl -XDELETE -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal'
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal' -d '
 {
   "password" : "tzcorp!323",
   "roles" : [ "logstash_writer", "logstash_system" ],
@@ -37,32 +37,32 @@ curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'h
 }'
 
 #PUT _xpack/security/user/logstash_system/_enable
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_system/_enable'
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_system/_enable'
 
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_internal/_enable'
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal/_enable'
 
-curl -XGET -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/role/logstash_writer?pretty'
-curl -XGET -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_internal?pretty'
+curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/role/logstash_writer?pretty'
+curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal?pretty'
 
 # get user info
-curl -XGET -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user?pretty'
-curl -XGET -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/role?pretty'
+curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user?pretty'
+curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/role?pretty'
 
 exit 0
 
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/elastic/_password' -d '{
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/elastic/_password' -d '{
   "password" : "tzcorp!323"
 }'
 
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/kibana/_password' -d '{
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/kibana/_password' -d '{
   "password" : "tzcorp!323"
 }'
 
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_system/_password' -d '{
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_system/_password' -d '{
   "password" : "Dlwpdldps!323"
 }'
 
-curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.ejntest.com/_xpack/security/user/logstash_internal/_password' -d '{
+curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal/_password' -d '{
   "password" : "tzcorp!323"
 }'
 

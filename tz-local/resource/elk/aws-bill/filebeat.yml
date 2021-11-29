@@ -8,13 +8,13 @@ filebeat.inputs:
   paths:
     - /data/csv/*-*.csv
 #  fields:
-#    account: "487604454824"
+#    account: "472304975363"
 #- type: log
 #  enabled: true
 #  paths:
-#    - /data/csv/487604454824-*.csv
+#    - /data/csv/472304975363-*.csv
 #  fields:
-#    account: "487604454824"
+#    account: "472304975363"
 
 filebeat.config.modules:
   path: /etc/filebeat/modules.d/*.yml
@@ -44,14 +44,14 @@ output.elasticsearch:
 
 #  index: "aws_usage-%{+yyyyMM}"
 #  indices:
-#    - index: "aws_usage-487604454824-yyyymm"
+#    - index: "aws_usage-472304975363-yyyymm"
 #      when.contains:
 #        fields:
-#          account: "487604454824"
-#    - index: "aws_usage-487604454824-yyyymm"
+#          account: "472304975363"
+#    - index: "aws_usage-472304975363-yyyymm"
 #      when.contains:
 #        fields:
-#          account: "487604454824"
+#          account: "472304975363"
 
 #output.logstash:
 #  protocol: http

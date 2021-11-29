@@ -1,6 +1,6 @@
-curl -XGET elk.ejntest.com:9200/nginx/_mapping?pretty
+curl -XGET elk.tztest.com:9200/nginx/_mapping?pretty
 
-curl -XPUT 'elk.ejntest.com:9200/nginx/_mapping/nginx?pretty' -d'
+curl -XPUT 'elk.tztest.com:9200/nginx/_mapping/nginx?pretty' -d'
 {
   "properties": {
     "geoip.city_name": { 
@@ -10,7 +10,7 @@ curl -XPUT 'elk.ejntest.com:9200/nginx/_mapping/nginx?pretty' -d'
   }
 }'
 
-curl -XPOST 'elk.ejntest.com:9200/nginx/_search?pretty' -d '
+curl -XPOST 'elk.tztest.com:9200/nginx/_search?pretty' -d '
 {
   "_source": false,
   "query": {
@@ -31,7 +31,7 @@ curl -XPOST 'elk.ejntest.com:9200/nginx/_search?pretty' -d '
 }
 '
 
-curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
+curl -XPOST 'elk.tztest.com:9200/stats/_search?pretty' -d '
 {
   "_source": false,
   "query": {
@@ -53,7 +53,7 @@ curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
 '
 
 # 특정 기간 중 나라별 호출수
-curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
+curl -XPOST 'elk.tztest.com:9200/stats/_search?pretty' -d '
 {
   "_source": false,
   "query": {
@@ -75,7 +75,7 @@ curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
 '
 
 # 특정 기간 중 국가별 액션별 호출 수
-curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
+curl -XPOST 'elk.tztest.com:9200/stats/_search?pretty' -d '
 {
   "_source": false,
   "query": {
@@ -104,7 +104,7 @@ curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
 '
 
 # 특정 기간 중 action=/user/home 인 국가별 호출 수
-curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
+curl -XPOST 'elk.tztest.com:9200/stats/_search?pretty' -d '
 {
   "_source": false,
   "query": {
@@ -133,7 +133,7 @@ curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
 '
 
 # 특정 기간 중 action=/user/home 인 국가별 / 5분별 호출 건수
-curl -XPOST 'elk.ejntest.com:9200/stats/_search?pretty' -d '
+curl -XPOST 'elk.tztest.com:9200/stats/_search?pretty' -d '
 {
   "_source": false,
   "query": {

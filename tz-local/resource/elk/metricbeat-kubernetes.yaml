@@ -75,7 +75,7 @@ data:
 
     output.elasticsearch:
       protocol: http
-      hosts: ["http://es.elk.es-eks.ejntest.com:80"]
+      hosts: ["http://es.elk.es-eks.tztest.com:80"]
       username: ${ELASTICSEARCH_USERNAME}
       password: ${ELASTICSEARCH_PASSWORD}
 

@@ -13,9 +13,9 @@ export DATE=`date +%Y%m%d`
 
 echo "=[snapshot]====================================================="
 
-curl -XDELETE "https://es.ejntest.com/_snapshot/_INDEX/_INDEX_${DATE}"
+curl -XDELETE "https://es.tztest.com/_snapshot/_INDEX/_INDEX_${DATE}"
 
-curl -XPUT "https://es.ejntest.com/_snapshot/_INDEX/_INDEX_${DATE}" -d'
+curl -XPUT "https://es.tztest.com/_snapshot/_INDEX/_INDEX_${DATE}" -d'
 {
   "type": "fs",
   "settings": {
@@ -24,12 +24,12 @@ curl -XPUT "https://es.ejntest.com/_snapshot/_INDEX/_INDEX_${DATE}" -d'
   }
 }'
 
-curl -XGET "https://es.ejntest.com/_snapshot/_INDEX/_INDEX_${DATE}"
+curl -XGET "https://es.tztest.com/_snapshot/_INDEX/_INDEX_${DATE}"
 
-#curl -XGET "https://es.ejntest.com/_cat/indices"
+#curl -XGET "https://es.tztest.com/_cat/indices"
 
 echo "=[backup]====================================================="
-curl -XPUT "https://es.ejntest.com/_snapshot/_INDEX/_INDEX_${DATE}?wait_for_completion=true&pretty" -d'
+curl -XPUT "https://es.tztest.com/_snapshot/_INDEX/_INDEX_${DATE}?wait_for_completion=true&pretty" -d'
 {
    "indices": "_INDEX*",  
    "ignore_unavailable": true,

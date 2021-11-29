@@ -9,7 +9,7 @@ kubectl get pod -n kube-system | grep dns
 
 kubectl describe configmap -n kube-system coredns > coredns.configmap
 #
-#ping docker.default.es-eks-t.ejntest.com
+#ping docker.default.es-eks-t.tztest.com
 #15.165.109.71
 #
 #  hosts {

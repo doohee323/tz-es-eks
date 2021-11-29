@@ -1,11 +1,11 @@
 #         "format": "date_hour_minute_second_millis",
 
-#curl -XGET -u 'elastic:tzcorp!323' 'https://es.ejntest.com/nginx*?pretty'
-#curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.ejntest.com/nginx*?pretty'
+#curl -XGET -u 'elastic:tzcorp!323' 'https://es.tztest.com/nginx*?pretty'
+#curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/nginx*?pretty'
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.ejntest.com/nginx';
+curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/nginx';
 
-curl -XPUT -u 'elastic:tzcorp!323' 'https://es.ejntest.com/nginx' -d \
+curl -XPUT -u 'elastic:tzcorp!323' 'https://es.tztest.com/nginx' -d \
 '
 {
   "settings": {},
@@ -155,9 +155,9 @@ curl -XPUT -u 'elastic:tzcorp!323' 'https://es.ejntest.com/nginx' -d \
   }
 }';
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.ejntest.com/stats';
+curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/stats';
 
-curl -XPUT -u 'elastic:tzcorp!323' 'https://es.ejntest.com/stats' -d \
+curl -XPUT -u 'elastic:tzcorp!323' 'https://es.tztest.com/stats' -d \
 '
 {
   "settings": {},

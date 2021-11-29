@@ -14,6 +14,21 @@ admin_password=$(prop 'project' 'admin_password')
 admin_password="elastic:${admin_password}"
 echo ${admin_password}
 ES_URL="es.${NS}.${eks_project}.${eks_domain}"
+
+sudo apt-get update && apt install systemd curl netcat dnsutils telnet -y
+
+export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
+truncate -s0 /tmp/preseed.cfg; \
+  echo "tzdata tzdata/Areas select America" >> /tmp/preseed.cfg; \
+  echo "tzdata tzdata/Zones/America select Los_Angeles" >> /tmp/preseed.cfg; \
+  sudo debconf-set-selections /tmp/preseed.cfg && \
+  sudo rm -f /etc/timezone /etc/localtime && \
+  sudo apt-get update && \
+  sudo apt-get install tzdata -y
+
+sudo echo "America/Los_Angeles" > /etc/timezone
+sudo dpkg-reconfigure -f noninteractive tzdata
+
 CURRENT_INDEX="test_current-`date '+%Y%m%d'`"
 NEW_INDEX="test_new-`date '+%Y%m%d'`"
 
@@ -166,19 +181,11 @@ ${ES_URL}/_aliases \
 }'
 
 #Step 10: clean duplicated data during switching
-curl -XGET -u ${admin_password} \
-"${ES_URL}/${NEW_INDEX}/_search?scroll=10m&size=50" \
--H 'Content-Type: application/json' \
--d '{
-    "query" : {
-        "match_all" : {}
-    }
-}'
+#curl -XPOST -u ${admin_password} \
+#"${ES_URL}/${NEW_INDEX}/_search?pretty" \
 
 curl -XPOST -u ${admin_password} \
-"${ES_URL}/${NEW_INDEX}/_search?pretty" \
-#curl -XPOST -u ${admin_password} \
-#"${ES_URL}/${NEW_INDEX}/_delete_by_query" \
+"${ES_URL}/${NEW_INDEX}/_delete_by_query" \
 -H 'Content-Type: application/json' \
 -d '{
     "query":
@@ -192,10 +199,10 @@ curl -XPOST -u ${admin_password} \
           {
             "range": {
               "print_time": {
-                "gte": "2021-11-26T20:44:07.508Z",
-                "lte": "2021-11-26T20:45:54.308Z",
-                "format": "strict_date_optional_time"
-              }
+  "gte": "2021-11-29T05:42:52.320Z",
+  "lte": "2021-11-29T05:44:20.228Z",
+  "format": "strict_date_optional_time"
+}
             }
           },
           {

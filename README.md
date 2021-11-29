@@ -14,7 +14,7 @@ TZ's main eks cluster with terraform
         vi resources/project
         aws_account_id=xxxxxxx
         project=es-eks-a
-        domain=ejntest.com
+        domain=tztest.com
         github_id=doohee.hong
         admin_password=xxxxx
 

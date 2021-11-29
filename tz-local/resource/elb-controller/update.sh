@@ -2,7 +2,7 @@
 
 cd /vagrant/tz-local/resource/elb-controller
 
-# bash /vagrant/tz-local/resource/elb-controller/update.sh ejntest.com
+# bash /vagrant/tz-local/resource/elb-controller/update.sh tztest.com
 
 function prop {
 	grep "${2}" "/home/vagrant/.aws/${1}" | head -n 1 | cut -d '=' -f2 | sed 's/ //g'

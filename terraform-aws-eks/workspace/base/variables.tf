@@ -30,7 +30,7 @@ variable "lb_main_protocol" {
 }
 
 variable "main_endpoint" {
-  default = ["main.ejntest.com"]
+  default = ["main.tztest.com"]
 }
 
 variable "map_accounts" {
@@ -38,7 +38,7 @@ variable "map_accounts" {
   type        = list(string)
 
   default = [
-    "487604454824",
+    "472304975363",
   ]
 }
 
@@ -52,7 +52,7 @@ variable "map_roles" {
 
   default = [
     {
-      rolearn  = "arn:aws:iam::487604454824:role/es-eks-a20211127185152646200000001"
+      rolearn  = "arn:aws:iam::472304975363:role/es-eks-a20211127185152646200000001"
       username = "es-eks-a20211127185152646200000001"
       groups   = ["system:masters"]
     },
@@ -69,7 +69,7 @@ variable "map_users" {
 
   default = [
     {
-      userarn  = "arn:aws:iam::487604454824:user/devops"
+      userarn  = "arn:aws:iam::472304975363:user/devops"
       username = "devops"
       groups   = ["system:masters"]
     }

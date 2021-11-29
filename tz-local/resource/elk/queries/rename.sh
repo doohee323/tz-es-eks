@@ -1,4 +1,4 @@
-curl -XPOST -u 'elastic:tzcorp!323' 'https://es.ejntest.com/_reindex?pretty' -d'
+curl -XPOST -u 'elastic:tzcorp!323' 'https://es.tztest.com/_reindex?pretty' -d'
 {
   "source": {
     "index": "nginx"

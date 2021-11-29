@@ -6,6 +6,12 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+`
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy_connect_timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+
 spec:
   rules:
 #  - host: es.eks_domain

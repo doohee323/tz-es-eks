@@ -65,7 +65,7 @@ sleep 60
 kubectl rollout restart statefulset.apps/elasticsearch-data -n ${NS}
 
 #kubectl -n ${NS} port-forward svc/elasticsearch-master 9200
-#curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.es-eks.ejntest.com
+#curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.es-eks.tztest.com
 sleep 30
 
 #helm test elasticsearch -n ${NS}
