@@ -167,7 +167,7 @@ kubectl -n elk exec -it $(kubectl -n elk get pod | grep elasticsearch-master-0 |
   elasticsearch-keystore add xpack.notification.email.account.elastic.smtp.secure_password
   elasticsearch-keystore add xpack.notification.slack.account.monitoring.secure_url
   elasticsearch-keystore add xpack.notification.slack.account.elastic.secure_url
-  # https://hooks.slack.com/services/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
+  # https://hooks.slack.com/services/xxxx/xxxx/xxxx
   elasticsearch-keystore list
 
 
