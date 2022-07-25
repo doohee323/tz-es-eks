@@ -25,7 +25,7 @@ a_query='
     "remote": {
       "host": "http://172.31.22.192:9200",
       "username": "elastic",
-      "password": "tzcorp!323",
+      "password": "tztest!323",
       "socket_timeout": "1m",
       "connect_timeout": "10s"
     },
@@ -38,7 +38,7 @@ a_query='
 '
 a_query=`echo "${a_query}" | sed "s/\n/ /g" | sed "s/NEW_INDEX/${index}/g"`
 
-curl -XPOST -H 'Content-Type: application/json' -u 'elastic:tzcorp!323' ${new_instance}'/_reindex?pretty' -d "${a_query}"
+curl -XPOST -H 'Content-Type: application/json' -u 'elastic:tztest!323' ${new_instance}'/_reindex?pretty' -d "${a_query}"
   
 done
 

@@ -58,10 +58,6 @@ curl -v http://test1.${eks_domain}
 kubectl delete -f test2.yaml_bak
 kubectl delete -f test.yaml
 
-
-
-
-
 kubectl apply -f test2.yaml_bak -n devops
 
 

@@ -4,7 +4,7 @@ locals {
   environment                   =  "dev"
   k8s_service_account_namespace = "kube-system"
   k8s_service_account_name      = "cluster-autoscaler-aws-cluster-autoscaler-chart"
-  tzcorp_zone_id               = "ZEGN8MOW1060B"
+  tztest_zone_id               = "ZEGN8MOW1060B"
   tags                          = {
     application: local.cluster_name,
     environment: local.environment,

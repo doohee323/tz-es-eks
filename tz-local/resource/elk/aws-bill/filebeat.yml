@@ -33,7 +33,7 @@ output.elasticsearch:
   ssl.verification_mode: none
   hosts: ["elasticsearch-master.elk.svc.cluster.local:9200"]
   username: 'elastic'
-  password: 'Dlwpdldps!323'
+  password: 'admin_password'
   pipeline: aws_usage
 #  index: "aws_usage-%{[fields.account]}-%{+yyyyMM}"
 #  index: "aws_usage-%{[source]}"
@@ -73,6 +73,12 @@ processors:
       overwrite_keys: true
       trim_leading_space: false
       fail_on_error: true
+
+  - drop_event:
+      when:
+        range:
+          usageamount:
+            lt: 1
 
   - dissect:
       field: log.file.path

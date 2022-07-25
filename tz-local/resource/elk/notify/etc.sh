@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
 
+function prop {
+	grep "${2}" "/home/vagrant/.aws/${1}" | head -n 1 | cut -d '=' -f2 | sed 's/ //g'
+}
+eks_project=$(prop 'project' 'project')
+eks_domain=$(prop 'project' 'domain')
+admin_password=$(prop 'project' 'admin_password')
+
 ###[apm]#######################
 
 curl -L -O https://artifacts.elastic.co/downloads/apm-server/apm-server-7.5.0-amd64.deb
 sudo dpkg -i apm-server-7.5.0-amd64.deb
 
 sudo sed -i 's|host: "localhost:8200"|host: "0.0.0.0:8200"|g' /etc/apm-server/apm-server.yml
-sudo sed -i 's|localhost:9200|elk.sodatransfer.com:9200|g' /etc/apm-server/apm-server.yml
+sudo sed -i 's|localhost:9200|elk.tztest.com:9200|g' /etc/apm-server/apm-server.yml
 sudo sed -i 's|#setup.kibana:|setup.kibana:|g' /etc/apm-server/apm-server.yml
 sudo sed -i 's|#username: "elastic"|username: "elastic"|g' /etc/apm-server/apm-server.yml
-sudo sed -i 's|#password: "changeme"|password: "sodatransfer!323"|g' /etc/apm-server/apm-server.yml
+sudo sed -i "s|#password: "changeme"|password: ${admin_password}|g" /etc/apm-server/apm-server.yml
 
 service apm-server restart
 
@@ -26,7 +33,7 @@ xpack.notification.email.account:
       starttls.required: true
       host: email-smtp.us-east-1.amazonaws.com 
       port: 587
-      user: AKIAT22NDA53KYJTHVWA
+      user: AKIATEMCRY56FRXPNTG6
 
 /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.notification.email.account.gmail_account.smtp.secure_password
 /usr/share/elasticsearch/bin/elasticsearch-keystore remove xpack.notification.email.account.gmail_account.smtp.secure_password
@@ -39,7 +46,7 @@ xpack.notification.email.account:
         starttls.enable: true
         host: smtp.gmail.com
         port: 587
-        user: doohee323@gmail.com
+        user: devops@tz.gg
 
 /usr/share/elasticsearch/bin/elasticsearch-keystore list 
 
@@ -58,7 +65,7 @@ POST _watcher/watch/_execute
     "actions": {
       "send_email": {
         "email": {
-          "to": "doohee323@gmail.com",
+          "to": "devops@tz.gg",
           "subject": "subject11",
           "body": {
             "html": "HTML22222"

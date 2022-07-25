@@ -4,7 +4,6 @@
 #https://stackoverflow.com/questions/69403837/how-to-use-tomcat-remoteipfilter-in-spring-boot
 
 #bash /vagrant/tz-local/resource/ingress_nginx/install.sh
-
 cd /vagrant/tz-local/resource/ingress_nginx
 
 function prop {
@@ -37,11 +36,21 @@ alias k="kubectl -n ${NS} --kubeconfig ~/.kube/config"
 kubectl create ns ${NS}
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-APP_VERSION=3.35.0
+APP_VERSION=4.0.13
 #helm search repo nginx-ingress
 helm uninstall ingress-nginx -n ${NS}
+
+pushd `pwd`
+cd /vagrant/terraform-aws-eks/workspace/base
+allowed_management_cidr_blocks=$(terraform output allowed_management_cidr_blocks)
+allowed_management_cidr_blocks=`echo ${allowed_management_cidr_blocks} | sed "s|, ]| ]|g" | tr "\n" " "`
+popd
+echo ${allowed_management_cidr_blocks}
+cp values.yaml values.yaml_bak
+allowed_management_cidr_blocks="[]"
+sed -i "s|allowed_management_cidr_blocks|${allowed_management_cidr_blocks}|g" values.yaml_bak
 helm upgrade --debug --install --reuse-values ingress-nginx ingress-nginx/ingress-nginx \
-  -f values.yaml --version ${APP_VERSION} -n ${NS}
+  -f values.yaml_bak --version ${APP_VERSION} -n ${NS}
 
 sleep 60
 DEVOPS_ELB=$(kubectl get svc | grep ingress-nginx-controller | grep LoadBalancer | head -n 1 | awk '{print $4}')
@@ -58,13 +67,6 @@ aws route53 change-resource-record-sets --hosted-zone-id ${HOSTZONE_ID} \
  --change-batch '{ "Comment": "'"${eks_project}"' utils", "Changes": [{"Action": "DELETE", "ResourceRecordSet": {"Name": "*.'"${NS}"'.'"${eks_project}"'.'"${eks_domain}"'", "Type": "CNAME", "TTL": 120, "ResourceRecords": [{"Value": "'"${CUR_ELB}"'"}]}}]}'
 aws route53 change-resource-record-sets --hosted-zone-id ${HOSTZONE_ID} \
  --change-batch '{ "Comment": "'"${eks_project}"' utils", "Changes": [{"Action": "CREATE", "ResourceRecordSet": { "Name": "*.'"${NS}"'.'"${eks_project}"'.'"${eks_domain}"'", "Type": "CNAME", "TTL": 120, "ResourceRecords": [{"Value": "'"${DEVOPS_ELB}"'"}]}}]}'
-
-#k delete deployment nginx
-#k create deployment nginx --image=nginx
-#k delete svc/nginx
-##k port-forward deployment/nginx 80
-##k expose deployment/nginx --port 80 --type LoadBalancer
-#k expose deployment/nginx --port 80
 
 sleep 30
 
@@ -86,36 +88,30 @@ helm repo add jetstack https://charts.jetstack.io
 helm repo update
 
 ## Install using helm v3+
-helm uninstall cert-manager --namespace cert-manager
+helm uninstall cert-manager -n cert-manager
+k delete -f https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.crds.yaml
+kubectl get customresourcedefinition | grep cert-manager | awk '{print $1}' | xargs -I {} kubectl delete customresourcedefinition {}
 k delete namespace cert-manager
 k create namespace cert-manager
-helm install \
+# Install needed CRDs
+kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.crds.yaml
+k apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.crds.yaml
+# --reuse-values
+helm upgrade --debug --install  \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
+  --create-namespace \
   --set installCRDs=false \
-  --version v0.15.2
-# Install needed CRDs
-k apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.crds.yaml
-#kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.crds.yaml
+  --version v1.8.2
 
-#helm install \
-#  cert-manager jetstack/cert-manager \
-#  --namespace cert-manager \
-#  --create-namespace \
-#  --set featureGates="ExperimentalCertificateSigningRequestControllers=true" \
-#  # --set installCRDs=true
 sleep 30
+
+kubectl get CustomResourceDefinition | grep cert-manager
+kubectl get all -n cert-manager
 
 k get pods --namespace cert-manager
 k delete -f letsencrypt-prod.yaml
 k apply -f letsencrypt-prod.yaml
-
-#k delete deployment nginx
-#k create deployment nginx --image=nginx
-#k delete svc/nginx
-##k port-forward deployment/nginx 80
-##k expose deployment/nginx --port 80 --type LoadBalancer
-#k expose deployment/nginx --port 80
 
 sleep 20
 
@@ -139,7 +135,9 @@ kubectl describe certificate nginx-test-tls -n ${NS}
 kubectl get secrets --all-namespaces | grep nginx-test-tls
 kubectl get certificates --all-namespaces | grep nginx-test-tls
 
-PROJECTS=($(kubectl get namespaces | awk '{print $1}' | tr '\n' ' '))
+#PROJECTS=($(kubectl get namespaces | awk '{print $1}' | tr '\n' ' '))
+#PROJECTS=(common common-dev)
+PROJECTS=(argocd consul common common-dev datateam datateam-dev default devops devops-dev extension extension-dev monitoring tgd tgd-dev devops devops-dev vault)
 for item in "${PROJECTS[@]}"; do
   if [[ "${item}" != "NAME" ]]; then
     echo "====================="
@@ -159,8 +157,12 @@ kubectl get csr
 kubectl get csr -o name | xargs kubectl certificate approve
 
 kubectl get certificate --all-namespaces
+kubectl cert-manager renew ingress-vault-tls -n vault
 
+kubectl krew install ingress-nginx
 kubectl ingress-nginx backends --list
+kubectl ingress-nginx certs -n default --host k8s.partners.mydevops.net
+kubectl ingress-nginx conf -n default --host k8s.partners.mydevops.net
 kubectl ingress-nginx exec -i -n default -- ls /etc/nginx
 kubectl ingress-nginx info -n default --service ingress-nginx-controller
 kubectl ingress-nginx ingresses --all-namespaces
@@ -169,7 +171,8 @@ kubectl ingress-nginx logs -n default
 
 exit 0
 
-PROJECTS=($(kubectl get namespaces | awk '{print $1}' | tr '\n' ' '))
+#PROJECTS=($(kubectl get namespaces | awk '{print $1}' | tr '\n' ' '))
+PROJECTS=(argocd consul common common-dev datateam datateam-dev default devops devops-dev extension extension-dev monitoring tgd tgd-dev devops devops-dev vault)
 for item in "${PROJECTS[@]}"; do
   if [[ "${item}" != "NAME" ]]; then
     echo "====================="
@@ -179,13 +182,20 @@ for item in "${PROJECTS[@]}"; do
 done
 
 kubectl cert-manager create certificaterequest my-cr --from-certificate-file my-certificate.yaml --fetch-certificate --timeout 20m
+kubectl cert-manager status certificate ingress-vault-tls-3746172421 -n vault
+kubectl get CertificateRequest ingress-vault-tls-3746172421 -n vault
 
 kubectl get certificaterequest --all-namespaces
 
 kubectl cert-manager completion
+kubectl cert-manager renew ingress-vault-tls -n vault
 
 kubectl get certificaterequest --all-namespaces
 kubectl get certificates --all-namespaces
+
+kubectl delete certificates ingress-consul-tls -n consul
+kubectl delete certificaterequest ingress-consul-tls-4229033796 -n consul
+
 
 exit 0
 
@@ -242,4 +252,3 @@ aws elb describe-load-balancers --load-balancer-name a591376a9c4be4de6be75307f38
 #                    ]
 #                }
 #            ],
-

@@ -15,6 +15,8 @@ function prop {
 eks_project=$(prop 'project' 'project')
 eks_domain=$(prop 'project' 'domain')
 admin_password=$(prop 'project' 'admin_password')
+export AWS_ACCESS_KEY_ID=$(prop 'credentials' 'aws_access_key_id')
+export AWS_SECRET_ACCESS_KEY=$(prop 'credentials' 'aws_secret_access_key')
 NS=elk
 export STACK_VERSION=7.13.2
 
@@ -38,6 +40,10 @@ bash create-elastic-certificates.sh
 #https://github.com/elastic/helm-charts/blob/master/elasticsearch/values.yaml
 sleep 10
 
+kubectl -n elk create secret generic aws-s3-keys \
+  --from-literal=access-key-id=${AWS_ACCESS_KEY_ID} \
+  --from-literal=access-secret-key=${AWS_SECRET_ACCESS_KEY}
+
 cp es_values.yaml es_values.yaml_bak
 sed -i "s/eks_project/${eks_project}/g" es_values.yaml_bak
 sed -i "s/eks_domain/${eks_domain}/g" es_values.yaml_bak
@@ -47,8 +53,6 @@ helm upgrade --debug --install --reuse-values -f es_values.yaml_bak elasticsearc
 
 k patch statefulset/elasticsearch-master -p '{"spec": {"template": {"spec": {"nodeSelector": {"team": "devops"}}}}}'
 k patch statefulset/elasticsearch-master -p '{"spec": {"template": {"spec": {"nodeSelector": {"environment": "elk"}}}}}'
-sleep 60
-
 kubectl rollout restart statefulset.apps/elasticsearch-master -n ${NS}
 #k get pods | grep elasticsearch-master | awk '{print $1}' | xargs kubectl -n ${NS} delete pod
 kubectl get csr -o name | xargs kubectl certificate approve
@@ -61,12 +65,12 @@ sed -i "s/ADMIN_PASSWORD/${admin_password}/g" es_data_values.yaml_bak
 helm upgrade --debug --install --reuse-values -f es_data_values.yaml_bak elasticsearch-data elastic/elasticsearch --version ${STACK_VERSION} -n ${NS}
 k patch statefulset/elasticsearch-data -p '{"spec": {"template": {"spec": {"nodeSelector": {"team": "devops"}}}}}'
 k patch statefulset/elasticsearch-data -p '{"spec": {"template": {"spec": {"nodeSelector": {"environment": "elk"}}}}}'
-sleep 60
 kubectl rollout restart statefulset.apps/elasticsearch-data -n ${NS}
 
 #kubectl -n ${NS} port-forward svc/elasticsearch-master 9200
-#curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.es-eks.tztest.com
-sleep 30
+#curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.eks-main.tztest.com
+
+sleep 60
 
 #helm test elasticsearch -n ${NS}
 cp kb_values.yaml kb_values.yaml_bak
@@ -77,6 +81,7 @@ sed -i "s/eks_project/${eks_project}/g" kb_values.yaml_bak
 #helm uninstall kibana -n ${NS}
 helm upgrade --debug --install --reuse-values -f kb_values.yaml_bak kibana elastic/kibana --version ${STACK_VERSION} -n ${NS}
 kubectl get csr -o name | xargs kubectl certificate approve
+kubectl rollout restart deployment/kibana-kibana -n ${NS}
 
 sleep 100
 
@@ -167,7 +172,7 @@ kubectl -n elk exec -it $(kubectl -n elk get pod | grep elasticsearch-master-0 |
   elasticsearch-keystore add xpack.notification.email.account.elastic.smtp.secure_password
   elasticsearch-keystore add xpack.notification.slack.account.monitoring.secure_url
   elasticsearch-keystore add xpack.notification.slack.account.elastic.secure_url
-  # https://hooks.slack.com/services/xxxx/xxxx/xxxx
+  # https://hooks.slack.com/services/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
   elasticsearch-keystore list
 
 
@@ -186,7 +191,7 @@ POST _xpack/watcher/watch/_execute
     "actions": {
       "email": {
         "email": {
-          "to": "doohee323@gmail.com",
+          "to": "devops@tz.gg",
           "subject": "subject11",
           "body": {
             "html": "HTML22222"

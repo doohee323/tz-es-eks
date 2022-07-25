@@ -1,0 +1,89 @@
+PUT _ingest/pipeline/aws_cloudfront_logs
+{
+  "description" : "aws_cloudfront_logs data ingestion",
+  "processors": [
+    {
+      "grok": {
+        "field": "message",
+        "patterns": ["%{DATE_EU:date}\t%{TIME:time}\t%{GREEDYDATA:x_edge_location}\t(?:%{NUMBER:sc_bytes:int}|-)\t%{IPORHOST:clinetip}\t%{WORD:cs_method}\t%{HOSTNAME:cs_host}\t%{NOTSPACE:cs_uri_stem}\t%{NUMBER:sc_status:int}\t%{GREEDYDATA:referrer}\t%{GREEDYDATA:User_Agent}\t%{GREEDYDATA:cs-uri-query}\t%{GREEDYDATA:cookies}\t%{WORD:x_edge_result_type}\t%{NOTSPACE:x_edge_request_id}\t%{HOSTNAME:x_host_header}\t%{URIPROTO:cs_protocol}\t%{INT:cs_bytes:int}\t%{NUMBER:time_taken:float}\t%{GREEDYDATA:x_forwarded_for}\t%{GREEDYDATA:ssl_protocol}\t%{GREEDYDATA:ssl_cipher}\t%{GREEDYDATA:x_edge_response_result_type}\t%{GREEDYDATA:cs-protocol-version}\t%{GREEDYDATA:fle-status}\t%{GREEDYDATA:fle-encrypted-fields}"]
+      }
+    },
+    {
+      "set": {
+        "field": "listener_timestamp",
+        "value": "{{date}} {{time}}"
+      }
+    },
+    {
+      "date": {
+        "field": "listener_timestamp",
+        "target_field": "@timestamp",
+        "formats": [
+            "yy-MM-dd HH:mm:ss"
+        ]
+      }
+    },
+    {
+      "user_agent" : {
+        "field" : "User_Agent"
+      }
+    },
+    {
+      "set": {
+        "value": "{{clinetip}}",
+        "ignore_empty_value": true,
+        "field": "client.address"
+      }
+    },
+    {
+      "geoip": {
+        "field": "clinetip",
+        "target_field": "source.geo",
+        "ignore_missing": true
+      }
+    },
+    {
+      "geoip": {
+        "ignore_missing": true,
+        "database_file": "GeoLite2-ASN.mmdb",
+        "field": "clinetip",
+        "target_field": "source.as",
+        "properties": [
+            "asn",
+            "organization_name"
+        ]
+      }
+    }
+  ]
+}
+
+POST /_ingest/pipeline/aws_cloudfront_logs/_simulate
+{
+  "docs": [
+    {
+      "_index": "index",
+      "_id": "id",
+      "_source": {
+        "message": "2022-07-23\t22:46:41\tICN54-C2\t6202\t220.88.70.237\tGET\td3lemqixaar60u.cloudfront.net\t/dashboard/css/patterns/header-profile.png\t200\thttps://assets.mydevops.net/dashboard/css/dashboard.minified-1.0.2.css\tMozilla/5.0%20(Windows%20NT%2010.0;%20Win64;%20x64)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/103.0.0.0%20Safari/537.36\t-\t-\tHit\t4ovQwU-uD-meaFr1N1oQqW01IjJ5ldi5-MNX5kAYsrJJREwP0j0D3Q==\tassets.mydevops.net\thttps\t104\t0.000\t-\tTLSv1.3\tTLS_AES_128_GCM_SHA256\tHit\tHTTP/2.0\t-\t-\t51845\t0.000\tHit\timage/png\t5877\t-\t-"
+      }
+    }
+  ]
+}
+
+
+PUT _template/aws_cloudfront_logs_1
+{
+  "index_patterns": ["aws_cloudfront_logs-*"],
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      }
+    }
+  }
+}
+
+

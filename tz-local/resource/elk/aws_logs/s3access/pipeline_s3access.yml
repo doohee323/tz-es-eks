@@ -1,0 +1,275 @@
+PUT _ingest/pipeline/aws_s3access_logs
+{
+  "description" : "aws_s3access_logs data ingestion",
+  "processors":
+    [
+      {
+        "set": {
+          "field": "event.category",
+          "value": "web"
+        }
+      },
+      {
+        "append": {
+          "value": "access",
+          "field": "event.type"
+        }
+      },
+      {
+        "set": {
+          "field": "event.ingested",
+          "value": "{{_ingest.timestamp}}"
+        }
+      },
+      {
+        "grok": {
+          "field": "message",
+          "patterns": [
+              "%{BASE16NUM:aws.s3access.bucket_owner} %{HOSTNAME:aws.s3access.bucket} \\[%{HTTPDATE:_temp_.s3access_time}\\] %{IP:aws.s3access.remote_ip} (?:-|%{S3REQUESTER:aws.s3access.requester}) %{S3REQUESTID:aws.s3access.request_id} %{S3OPERATION:aws.s3access.operation} (?:-|%{S3KEY:aws.s3access.key}) (?:-|\\\"%{DATA:aws.s3access.request_uri}\\\") %{NUMBER:aws.s3access.http_status:long} (?:-|%{WORD:aws.s3access.error_code}) (?:-|%{NUMBER:aws.s3access.bytes_sent:long}) (?:-|%{NUMBER:aws.s3access.object_size:long}) (?:-|%{NUMBER:aws.s3access.total_time:long}) (?:-|%{NUMBER:aws.s3access.turn_around_time:long}) (?:-|\\\"-\\\"|\\\"%{DATA:aws.s3access.referrer}\\\") (?:-|\\\"(-|%{DATA:aws.s3access.user_agent})\\\") (?:-|%{S3KEY:aws.s3access.version_id}) (?:-|%{S3ID:aws.s3access.host_id}) (?:-|%{S3VERSION:aws.s3access.signature_version}) (?:-|%{S3KEY:aws.s3access.cipher_suite}) (?:-|%{WORD:aws.s3access.authentication_type}) (?:-|%{S3ID:aws.s3access.host_header}) (?:-|%{S3VERSION:aws.s3access.tls_version})"
+          ],
+          "pattern_definitions": {
+            "S3ID": "[a-zA-Z0-9\\/_\\.\\-%+=]+",
+            "S3VERSION": "[a-zA-Z0-9.]+",
+            "S3REQUESTER": "[a-zA-Z0-9\\/_\\.\\-%:@]+",
+            "S3REQUESTID": "[a-zA-Z0-9]+",
+            "S3OPERATION": "%{WORD}.%{WORD}.%{WORD}",
+            "S3KEY": "[a-zA-Z0-9\\/_\\.\\-%+]+"
+          }
+        }
+      },
+      {
+        "grok": {
+          "field": "aws.s3access.request_uri",
+          "ignore_failure": true,
+          "patterns": [
+              "%{NOTSPACE:http.request.method} %{NOTSPACE:url.original} [hH][tT][tT][pP]/%{NOTSPACE:http.version}"
+          ]
+        }
+      },
+      {
+        "grok": {
+          "field": "url.original",
+          "ignore_failure": true,
+          "patterns": [
+              "^%{ABS_PATH:url.path}(?:\\?%{DATA:url.query})?$"
+          ],
+          "pattern_definitions": {
+            "ABS_PATH": "/[^?]*"
+          }
+        }
+      },
+      {
+        "append": {
+          "if": "ctx?.aws?.s3access?.bucket_owner != null",
+          "field": "related.user",
+          "value": "{{aws.s3access.bucket_owner}}"
+        }
+      },
+      {
+        "date": {
+          "formats": [
+              "dd/MMM/yyyy:H:m:s Z"
+          ],
+          "field": "_temp_.s3access_time",
+          "target_field": "@timestamp",
+          "ignore_failure": true
+        }
+      },
+      {
+        "set": {
+          "field": "client.ip",
+          "value": "{{aws.s3access.remote_ip}}",
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "append": {
+          "if": "ctx?.aws?.s3access?.remote_ip != null",
+          "field": "related.ip",
+          "value": "{{aws.s3access.remote_ip}}"
+        }
+      },
+      {
+        "set": {
+          "value": "{{aws.s3access.remote_ip}}",
+          "ignore_empty_value": true,
+          "field": "client.address"
+        }
+      },
+#      {
+#        "geoip": {
+#          "if": "ctx?.aws?.s3access?.remote_ip != null",
+#          "field": "aws.s3access.remote_ip",
+#          "target_field": "geo"
+#        }
+#      },
+      {
+        "geoip": {
+          "field": "aws.s3access.remote_ip",
+          "target_field": "source.geo",
+          "ignore_missing": true
+        }
+      },
+      {
+        "geoip": {
+          "ignore_missing": true,
+          "database_file": "GeoLite2-ASN.mmdb",
+          "field": "aws.s3access.remote_ip",
+          "target_field": "source.as",
+          "properties": [
+              "asn",
+              "organization_name"
+          ]
+        }
+      },
+      {
+        "set": {
+          "ignore_empty_value": true,
+          "field": "client.user.id",
+          "value": "{{aws.s3access.requester}}"
+        }
+      },
+      {
+        "set": {
+          "field": "event.id",
+          "value": "{{aws.s3access.request_id}}",
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "set": {
+          "ignore_empty_value": true,
+          "field": "event.action",
+          "value": "{{aws.s3access.operation}}"
+        }
+      },
+      {
+        "set": {
+          "field": "http.response.status_code",
+          "value": "{{aws.s3access.http_status}}",
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "convert": {
+          "if": "ctx?.http?.response?.status_code != null",
+          "field": "http.response.status_code",
+          "type": "long"
+        }
+      },
+      {
+        "set": {
+          "if": "ctx?.aws?.s3access?.error_code != null",
+          "field": "event.outcome",
+          "value": "failure"
+        }
+      },
+      {
+        "set": {
+          "field": "event.code",
+          "value": "{{aws.s3access.error_code}}",
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "set": {
+          "if": "ctx?.aws?.s3access?.error_code == null",
+          "field": "event.outcome",
+          "value": "success"
+        }
+      },
+      {
+        "convert": {
+          "ignore_failure": true,
+          "field": "aws.s3access.bytes_sent",
+          "target_field": "http.response.body.bytes",
+          "type": "long"
+        }
+      },
+      {
+        "convert": {
+          "target_field": "event.duration",
+          "type": "long",
+          "ignore_failure": true,
+          "field": "aws.s3access.total_time"
+        }
+      },
+      {
+        "script": {
+          "source": "ctx.event.duration *= params.MS_TO_NS;",
+          "lang": "painless",
+          "if": "ctx.event?.duration != null",
+          "params": {
+            "MS_TO_NS": 1000000
+          }
+        }
+      },
+      {
+        "set": {
+          "field": "http.request.referrer",
+          "value": "{{aws.s3access.referrer}}",
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "user_agent": {
+          "if": "ctx?.aws?.s3access?.user_agent != null",
+          "field": "aws.s3access.user_agent"
+        }
+      },
+      {
+        "set": {
+          "field": "tls.cipher",
+          "value": "{{aws.s3access.cipher_suite}}",
+          "ignore_empty_value": true
+        }
+      },
+      {
+        "script": {
+          "if": "ctx.aws?.s3access?.tls_version != null",
+          "source": "def parts = ctx.aws.s3access.tls_version.toLowerCase().splitOnToken(\"v\"); if (parts.length != 2) {\n  return;\n} ctx.tls.version = parts[1]; ctx.tls.version_protocol = parts[0]",
+          "lang": "painless"
+        }
+      },
+      {
+        "set": {
+          "field": "cloud.provider",
+          "value": "aws"
+        }
+      },
+      {
+        "set": {
+          "value": "event",
+          "field": "event.kind"
+        }
+      },
+      {
+        "rename": {
+          "target_field": "event.original",
+          "field": "message"
+        }
+      },
+      {
+        "remove": {
+          "field": "_temp_",
+          "ignore_missing": true
+        }
+      }
+    ]
+}
+
+
+PUT _template/aws_s3access_logs_1
+{
+  "index_patterns": ["aws_s3access_logs-*"],
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      }
+    }
+  }
+}

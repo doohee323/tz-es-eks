@@ -20,19 +20,19 @@ sudo /usr/local/bin/curator_cli --host localhost --port 9200 delete_indices \
 
 exit 0
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/-bnginx-*-b';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/-bnginx-*-b';
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/nginx-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/stats-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/nginx-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/stats-2017*';
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/error_action-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/erroraction-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/user_action-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/useraction-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/error_action-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/erroraction-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/user_action-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/useraction-2017*';
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/.monitoring-es-2-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/.watcher-history-3-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/.monitoring-kibana-2-2017*';
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/.monitoring-logstash-2-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/.monitoring-es-2-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/.watcher-history-3-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/.monitoring-kibana-2-2017*';
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/.monitoring-logstash-2-2017*';
 
 	

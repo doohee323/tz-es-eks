@@ -4,7 +4,6 @@ roles:
   master: "false"
   ingest: "true"
   data: "true"
-#  data_hot: "true"
 #  ml: "false"
 #  remote_cluster_client: "false"
 
@@ -201,13 +200,30 @@ secretMounts:
 
 extraInitContainers:
   - name: install-plugins
+    securityContext:
+      privileged: true
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
     imagePullPolicy: IfNotPresent
+    env:
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: aws-s3-keys
+          key: access-key-id
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: aws-s3-keys
+          key: access-secret-key
     command:
     - sh
     - -c
     - |
+      /usr/bin/mkdir -p /usr/share/elasticsearch/.aws
+      /bin/chmod -Rf 777 /usr/share/elasticsearch/.aws
       bin/elasticsearch-plugin install --batch repository-s3
+      echo $AWS_ACCESS_KEY_ID | bin/elasticsearch-keystore add --stdin --force s3.client.default.access_key
+      echo $AWS_SECRET_ACCESS_KEY | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key
     volumeMounts:
     - name: plugins
       mountPath: /usr/share/elasticsearch/plugins

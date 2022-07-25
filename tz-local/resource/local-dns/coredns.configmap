@@ -22,6 +22,12 @@ Corefile:
     reload
     loadbalance
 }
+consul {
+  errors
+  cache 30
+  forward . 172.20.39.237
+}
+
 
 BinaryData
 ====

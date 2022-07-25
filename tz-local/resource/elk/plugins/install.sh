@@ -17,5 +17,6 @@ admin_password=$(prop 'project' 'admin_password')
 NS=elk
 export STACK_VERSION=7.13.2
 
+kubectl -n elk exec -it statefulset/elasticsearch-master -- elasticsearch-plugin remove repository-s3
 kubectl -n elk exec -it statefulset/elasticsearch-master -- elasticsearch-plugin install repository-s3
 

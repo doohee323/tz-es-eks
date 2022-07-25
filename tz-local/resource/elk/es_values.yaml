@@ -4,7 +4,6 @@ roles:
   master: "true"
   ingest: "true"
   data: "true"
-#  data_cold: "true"
 #  ml: "false"
 #  remote_cluster_client: "false"
 
@@ -77,13 +76,14 @@ transportPort: 9300
 service:
   labels: {}
   labelsHeadless: {}
-  type: ClusterIP
+  type: LoadBalancer
   nodePort: ""
   annotations: {}
   httpPortName: http
   transportPortName: transport
   loadBalancerIP: ""
-  loadBalancerSourceRanges: []
+  loadBalancerSourceRanges: [ ]
+  # 0.0.0.0/0
   externalTrafficPolicy: ""
 
 updateStrategy: RollingUpdate
@@ -119,8 +119,12 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: es.elk.eks_project.eks_domain
+    - host: es1.elk.eks_project.eks_domain
+      paths:
+      - path: /
+    - host: es.eks_domain
       paths:
       - path: /
 
@@ -214,13 +218,30 @@ secretMounts:
 
 extraInitContainers:
   - name: install-plugins
+    securityContext:
+      privileged: true
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
     imagePullPolicy: IfNotPresent
+    env:
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: aws-s3-keys
+          key: access-key-id
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: aws-s3-keys
+          key: access-secret-key
     command:
     - sh
     - -c
     - |
+      /usr/bin/mkdir -p /usr/share/elasticsearch/.aws
+      /bin/chmod -Rf 777 /usr/share/elasticsearch/.aws
       bin/elasticsearch-plugin install --batch repository-s3
+      echo $AWS_ACCESS_KEY_ID | bin/elasticsearch-keystore add --stdin --force s3.client.default.access_key
+      echo $AWS_SECRET_ACCESS_KEY | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key
     volumeMounts:
     - name: plugins
       mountPath: /usr/share/elasticsearch/plugins

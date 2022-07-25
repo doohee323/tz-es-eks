@@ -3,8 +3,8 @@
 # apt install awscli
 # preparation 1) make s3 auth
 # aws configure
-# AWS Access Key ID [None]: AKIAJSLFJ2UZND352MYQ
-# AWS Secret Access Key [None]: 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
+# AWS Access Key ID [None]: AKIATEMCRY56FRXPNTG6
+# AWS Secret Access Key [None]: xxxxx
 #
 # vi /root/.aws/config
 # [default]
@@ -13,8 +13,8 @@
 #
 # vi /root/.aws/credentials
 # [default]
-# aws_access_key_id = AKIAJSLFJ2UZND352MYQ
-# aws_secret_access_key = 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
+# aws_access_key_id = AKIATEMCRY56FRXPNTG6
+# aws_secret_access_key = xxxxx
 
 # preparation 2) add repo path in elasticsearch.yml 
 #vi /etc/es1/elasticsearch.yml
@@ -47,11 +47,11 @@ echo "==[start: "`date '+%Y%m%d%H%M%S'`"]=======================================
 export DATE=`date +%Y%m%d`
 
 # make s3 bucket
-#aws s3 rb s3://soda-elasticsearch --force
-COUNT=`aws s3 ls | grep soda-elasticsearch | wc -l`
+#aws s3 rb s3://tz-elasticsearch --force
+COUNT=`aws s3 ls | grep tz-elasticsearch | wc -l`
 echo $COUNT
 if [ "$COUNT" == "0" ]; then
-	aws s3 mb s3://soda-elasticsearch
+	aws s3 mb s3://tz-elasticsearch
 fi
 
 cd $CURDIR
@@ -65,8 +65,8 @@ sudo /bin/bash $CURDIR/backup.sh stats-2
 cd /var/lib/es1
 sudo tar cvfz elasticsearch_$DATE.zip /var/lib/es1/nodes
 
-aws s3 cp elasticsearch_$DATE.zip s3://soda-elasticsearch/
-aws s3 ls s3://soda-elasticsearch
+aws s3 cp elasticsearch_$DATE.zip s3://tz-elasticsearch/
+aws s3 ls s3://tz-elasticsearch
 
 echo "==[done: "`date '+%Y%m%d%H%M%S'`"]============================================"
 rm -Rf /var/lib/es1/*.zip

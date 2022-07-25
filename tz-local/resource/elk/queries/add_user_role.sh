@@ -31,7 +31,7 @@ curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security
 curl -XDELETE -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal'
 curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal' -d '
 {
-  "password" : "tzcorp!323",
+  "password" : "tztest!323",
   "roles" : [ "logstash_writer", "logstash_system" ],
   "full_name" : "Internal Logstash User"
 }'
@@ -51,19 +51,19 @@ curl -XGET -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security
 exit 0
 
 curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/elastic/_password' -d '{
-  "password" : "tzcorp!323"
+  "password" : "tztest!323"
 }'
 
 curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/kibana/_password' -d '{
-  "password" : "tzcorp!323"
+  "password" : "tztest!323"
 }'
 
 curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_system/_password' -d '{
-  "password" : "Dlwpdldps!323"
+  "password" : "xxxxx"
 }'
 
 curl -XPUT -H "Content-Type: application/json" -u "elastic:${admin_password}" 'https://es.tztest.com/_xpack/security/user/logstash_internal/_password' -d '{
-  "password" : "tzcorp!323"
+  "password" : "tztest!323"
 }'
 
 
@@ -72,10 +72,10 @@ cd /usr/share/es1/bin/x-pack
 bin/x-pack/users list
 #bin/x-pack/users useradd doohee -r superuser
 
-./users passwd elastic -p "tzcorp!323"
-./users passwd kibana -p "tzcorp!323"
-./users passwd logstash_system -p "tzcorp!323"
-./users passwd logstash_internal -p "tzcorp!323"
+./users passwd elastic -p "tztest!323"
+./users passwd kibana -p "tztest!323"
+./users passwd logstash_system -p "tztest!323"
+./users passwd logstash_internal -p "tztest!323"
 ./users useradd <username> -p <password>
 ./users useradd <username> -r <comma-separated list of role names>
 

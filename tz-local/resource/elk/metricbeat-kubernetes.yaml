@@ -75,7 +75,7 @@ data:
 
     output.elasticsearch:
       protocol: http
-      hosts: ["http://es.elk.es-eks.tztest.com:80"]
+      hosts: ["http://es.elk.eks-main.tztest.com:80"]
       username: ${ELASTICSEARCH_USERNAME}
       password: ${ELASTICSEARCH_PASSWORD}
 
@@ -172,7 +172,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.13.4
+        image: docker.elastic.co/beats/metricbeat:7.13.2
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",

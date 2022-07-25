@@ -9,8 +9,8 @@ sudo mkdir -p /tmp
 cd /tmp
 sudo rm -Rf /tmp/var
 
-echo sudo aws s3 cp s3://soda-elasticsearch/elasticsearch_$DATE.zip elasticsearch_$DATE.zip
-sudo aws s3 cp s3://soda-elasticsearch/elasticsearch_$DATE.zip elasticsearch_$DATE.zip
+echo sudo aws s3 cp s3://tz-elasticsearch/elasticsearch_$DATE.zip elasticsearch_$DATE.zip
+sudo aws s3 cp s3://tz-elasticsearch/elasticsearch_$DATE.zip elasticsearch_$DATE.zip
 echo sudo tar xvfz /tmp/elasticsearch_$DATE.zip
 sudo tar xvfz /tmp/elasticsearch_$DATE.zip
 

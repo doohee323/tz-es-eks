@@ -1,0 +1,126 @@
+# Module: aws
+# Docs: https://www.elastic.co/guide/en/beats/filebeat/7.13/filebeat-module-aws.html
+
+- module: aws
+  cloudtrail:
+    enabled: false
+    #var.queue_url: https://sqs.myregion.amazonaws.com/123456/myqueue
+    #var.bucket_arn: 'arn:aws:s3:::mybucket'
+    #var.bucket_list_prefix: 'prefix'
+    #var.bucket_list_interval: 300s
+    #var.number_of_workers: 5
+    #var.shared_credential_file: /etc/filebeat/aws_credentials
+    #var.credential_profile_name: fb-aws
+    #var.access_key_id: access_key_id
+    #var.secret_access_key: secret_access_key
+    #var.session_token: session_token
+    #var.visibility_timeout: 300s
+    #var.api_timeout: 120s
+    #var.endpoint: amazonaws.com
+    #var.default_region: us-east-1
+    #var.role_arn: arn:aws:iam::123456789012:role/test-mb
+    #var.proxy_url: http://proxy:8080
+
+  cloudwatch:
+    enabled: false
+    #var.queue_url: https://sqs.myregion.amazonaws.com/123456/myqueue
+    #var.bucket_arn: 'arn:aws:s3:::mybucket'
+    #var.bucket_list_prefix: 'prefix'
+    #var.bucket_list_interval: 300s
+    #var.number_of_workers: 5
+    #var.shared_credential_file: /etc/filebeat/aws_credentials
+    #var.credential_profile_name: fb-aws
+    #var.access_key_id: access_key_id
+    #var.secret_access_key: secret_access_key
+    #var.session_token: session_token
+    #var.visibility_timeout: 300s
+    #var.api_timeout: 120s
+    #var.endpoint: amazonaws.com
+    #var.default_region: us-east-1
+    #var.role_arn: arn:aws:iam::123456789012:role/test-mb
+    #var.proxy_url: http://proxy:8080
+
+  ec2:
+    enabled: false
+    #var.queue_url: https://sqs.myregion.amazonaws.com/123456/myqueue
+    #var.bucket_arn: 'arn:aws:s3:::mybucket'
+    #var.bucket_list_prefix: 'prefix'
+    #var.bucket_list_interval: 300s
+    #var.number_of_workers: 5
+    #var.shared_credential_file: /etc/filebeat/aws_credentials
+    #var.credential_profile_name: fb-aws
+    #var.access_key_id: access_key_id
+    #var.secret_access_key: secret_access_key
+    #var.session_token: session_token
+    #var.visibility_timeout: 300s
+    #var.api_timeout: 120s
+    #var.endpoint: amazonaws.com
+    #var.default_region: us-east-1
+    #var.role_arn: arn:aws:iam::123456789012:role/test-mb
+    #var.proxy_url: http://proxy:8080
+
+  elb:
+    enabled: true
+    queue_url: https://sqs.ap-northeast-2.amazonaws.com/472304975363/elbaccess-event-queue
+    var.region_name: ap-northeast-2
+    #var.queue_url: https://sqs.myregion.amazonaws.com/123456/myqueue
+    #var.bucket_arn: 'arn:aws:s3:::mybucket'
+    #var.bucket_list_prefix: 'prefix'
+    #var.bucket_list_interval: 300s
+    #var.number_of_workers: 5
+    #var.shared_credential_file: /etc/filebeat/aws_credentials
+    var.credential_profile_name: es-eks-a
+    var.access_key_id: aws_access_key_id
+    var.secret_access_key: aws_secret_access_key
+    #var.session_token: session_token
+    #var.visibility_timeout: 300s
+    #var.api_timeout: 120s
+    var.endpoint: amazonaws.com
+    var.default_region: ap-northeast-2
+    var.role_arn: arn:aws:iam::472304975363:role/es-eks-a20211215034734756100000002
+    #var.proxy_url: http://proxy:8080
+
+  s3access:
+    enabled: true
+
+    # AWS SQS queue url
+    queue_url: https://sqs.ap-northeast-2.amazonaws.com/472304975363/elbaccess-event-queue
+    var.region_name: ap-northeast-2
+
+    #var.queue_url: https://sqs.myregion.amazonaws.com/123456/myqueue
+    #var.bucket_arn: 'arn:aws:s3:::mybucket'
+    #var.bucket_list_prefix: 'prefix'
+    #var.bucket_list_interval: 300s
+    #var.number_of_workers: 5
+    #var.shared_credential_file: /etc/filebeat/aws_credentials
+    var.credential_profile_name: es-eks-a
+
+    var.access_key_id: aws_access_key_id
+    var.secret_access_key: aws_secret_access_key
+    #var.session_token: session_token
+    #var.visibility_timeout: 300s
+    #var.api_timeout: 120s
+    var.endpoint: amazonaws.com
+    var.default_region: ap-northeast-2
+    var.role_arn: arn:aws:iam::472304975363:role/es-eks-a20211215034734756100000002
+    #var.proxy_url: http://proxy:8080
+
+  vpcflow:
+    enabled: false
+    #var.queue_url: https://sqs.myregion.amazonaws.com/123456/myqueue
+    #var.bucket_arn: 'arn:aws:s3:::mybucket'
+    #var.bucket_list_prefix: 'prefix'
+    #var.bucket_list_interval: 300s
+    #var.number_of_workers: 5
+    #var.shared_credential_file: /etc/filebeat/aws_credentials
+    #var.credential_profile_name: fb-aws
+    #var.access_key_id: access_key_id
+    #var.secret_access_key: secret_access_key
+    #var.session_token: session_token
+    #var.visibility_timeout: 300s
+    #var.api_timeout: 120s
+    #var.endpoint: amazonaws.com
+    #var.default_region: us-east-1
+    #var.role_arn: arn:aws:iam::123456789012:role/test-mb
+    #var.proxy_url: http://proxy:8080
+

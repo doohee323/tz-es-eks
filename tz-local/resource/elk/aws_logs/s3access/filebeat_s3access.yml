@@ -1,0 +1,36 @@
+filebeat.config.modules:
+  path: /etc/filebeat_s3access/modules.d/*.yml
+  reload.enabled: false
+
+setup.template:
+  enabled: false
+  settings:
+    index.number_of_shards: 2
+
+setup.kibana:
+  host: "kibana.elk.svc.cluster.local:5601"
+
+filebeat.config.inputs:
+  enabled: true
+  path: inputs.d/*.yml
+
+filebeat.inputs:
+- type: aws-s3
+  queue_url: https://sqs.ap-northeast-2.amazonaws.com/472304975363/s3access-event-queue
+  role_arn: arn:aws:iam::472304975363:role/es-eks-a20211215034734756100000002
+  visibility_timeout: 300s
+
+output.elasticsearch:
+  protocol: https
+  ssl.verification_mode: none
+  hosts: ["elasticsearch-master.elk.svc.cluster.local:9200"]
+  username: 'elastic'
+  password: 'admin_password'
+  index: "aws_s3access_logs-%{+yyyy.MM.dd}"
+  parameters.pipeline: aws_s3access_logs
+
+logging.level: debug
+monitoring.enabled: false
+
+setup.ilm.enabled: false
+

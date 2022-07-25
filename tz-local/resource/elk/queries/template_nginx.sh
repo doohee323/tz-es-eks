@@ -1,10 +1,10 @@
-curl -XGET -u 'elastic:tzcorp!323' 'https://es.tztest.com/_template/nginx_t1*?pretty'
+curl -XGET -u 'elastic:tztest!323' 'https://es.tztest.com/_template/nginx_t1*?pretty'
 
-curl -XDELETE -u 'elastic:tzcorp!323' 'https://es.tztest.com/_template/nginx_t1?pretty'
+curl -XDELETE -u 'elastic:tztest!323' 'https://es.tztest.com/_template/nginx_t1?pretty'
 
 # "template": "nginx*", : nginx로 시작되는 index가 생성될 때 자동 적용됨
 
-curl -XPUT -H 'Content-Type: application/json' -u 'elastic:tzcorp!323' 'https://es.tztest.com/_template/nginx_t1?pretty' -d'
+curl -XPUT -H 'Content-Type: application/json' -u 'elastic:tztest!323' 'https://es.tztest.com/_template/nginx_t1?pretty' -d'
 {
   "index_patterns": ["nginx-201*"],
   "settings": {

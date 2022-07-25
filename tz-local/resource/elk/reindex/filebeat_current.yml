@@ -23,7 +23,7 @@ output.elasticsearch:
   ssl.verification_mode: none
   hosts: ["elasticsearch-master.elk.svc.cluster.local:9200"]
   username: 'elastic'
-  password: 'Dlwpdldps!323'
+  password: 'xxxxx'
   pipeline: test_current_index
   index: "test_current-%{[dissect.yyyymm]}"
 

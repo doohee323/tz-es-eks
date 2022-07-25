@@ -1,18 +1,10 @@
-#!/usr/bin/env bash
-
 function prop {
 	grep "${2}" "/home/vagrant/.aws/${1}" | head -n 1 | cut -d '=' -f2 | sed 's/ //g'
 }
-
-eks_project=$(prop 'project' 'project')
-eks_domain=$(prop 'project' 'domain')
-admin_password=$(prop 'project' 'admin_password')
-NS=elk
-
 admin_password=$(prop 'project' 'admin_password')
 admin_password="elastic:${admin_password}"
 echo ${admin_password}
-ES_URL="es.${NS}.${eks_project}.${eks_domain}"
+ES_URL="es.elk.es-eks-a.tztest.com"
 
 curl -XPUT -u ${admin_password} ${ES_URL}/_ingest/pipeline/test_new_index \
 -H 'Content-Type: application/json' \

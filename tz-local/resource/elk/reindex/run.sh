@@ -1,34 +1,15 @@
 # https://www.thirdrocktechkno.com/blog/6-steps-to-reindex-elasticsearch-data/
 # https://medium.com/craftsmenltd/rebuild-elasticsearch-index-without-downtime-168363829ea4
 
+cd /vagrant/tz-local/resource/elk/reindex
+
 function prop {
 	grep "${2}" "/home/vagrant/.aws/${1}" | head -n 1 | cut -d '=' -f2 | sed 's/ //g'
 }
-
-eks_project=$(prop 'project' 'project')
-eks_domain=$(prop 'project' 'domain')
-admin_password=$(prop 'project' 'admin_password')
-NS=elk
-
 admin_password=$(prop 'project' 'admin_password')
 admin_password="elastic:${admin_password}"
 echo ${admin_password}
-ES_URL="es.${NS}.${eks_project}.${eks_domain}"
-
-sudo apt-get update && apt install systemd curl netcat dnsutils telnet -y
-
-export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
-truncate -s0 /tmp/preseed.cfg; \
-  echo "tzdata tzdata/Areas select America" >> /tmp/preseed.cfg; \
-  echo "tzdata tzdata/Zones/America select Los_Angeles" >> /tmp/preseed.cfg; \
-  sudo debconf-set-selections /tmp/preseed.cfg && \
-  sudo rm -f /etc/timezone /etc/localtime && \
-  sudo apt-get update && \
-  sudo apt-get install tzdata -y
-
-sudo echo "America/Los_Angeles" > /etc/timezone
-sudo dpkg-reconfigure -f noninteractive tzdata
-
+ES_URL="es.elk.es-eks-a.tztest.com"
 CURRENT_INDEX="test_current-`date '+%Y%m%d'`"
 NEW_INDEX="test_new-`date '+%Y%m%d'`"
 
@@ -181,11 +162,19 @@ ${ES_URL}/_aliases \
 }'
 
 #Step 10: clean duplicated data during switching
-#curl -XPOST -u ${admin_password} \
-#"${ES_URL}/${NEW_INDEX}/_search?pretty" \
+curl -XGET -u ${admin_password} \
+"${ES_URL}/${NEW_INDEX}/_search?scroll=10m&size=50" \
+-H 'Content-Type: application/json' \
+-d '{
+    "query" : {
+        "match_all" : {}
+    }
+}'
 
 curl -XPOST -u ${admin_password} \
-"${ES_URL}/${NEW_INDEX}/_delete_by_query" \
+"${ES_URL}/${NEW_INDEX}/_search?pretty" \
+#curl -XPOST -u ${admin_password} \
+#"${ES_URL}/${NEW_INDEX}/_delete_by_query" \
 -H 'Content-Type: application/json' \
 -d '{
     "query":
@@ -199,10 +188,10 @@ curl -XPOST -u ${admin_password} \
           {
             "range": {
               "print_time": {
-  "gte": "2021-11-29T05:42:52.320Z",
-  "lte": "2021-11-29T05:44:20.228Z",
-  "format": "strict_date_optional_time"
-}
+                "gte": "2021-11-26T20:44:07.508Z",
+                "lte": "2021-11-26T20:45:54.308Z",
+                "format": "strict_date_optional_time"
+              }
             }
           },
           {
@@ -217,3 +206,19 @@ curl -XPOST -u ${admin_password} \
     }
 }
 '
+
+exit 0
+
+curl -XGET -u ${admin_password} "${ES_URL}/_validate/query"
+
+GET tf_1/_search
+
+
+
+
+CURRENT_INDEX=sample_data
+curl -XDELETE -u ${admin_password} ${ES_URL}/${INDEX_NAME}
+curl -XPUT -u ${admin_password} ${ES_URL}/${INDEX_NAME} -H 'Content-Type: application/json'
+
+curl -XPOST -u ${admin_password} \
+  ${ES_URL}/${INDEX_NAME}/doc -H "Content-Type: application/json" -d @test.json

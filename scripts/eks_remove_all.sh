@@ -14,7 +14,9 @@ function cleanTfFiles() {
   rm -Rf /vagrant/config_*
   rm -Rf /vagrant/workspace/base/addition_*.tf
   rm -Rf /home/vagrant/.aws
-  rm -Rf /root/.aws
+  rm -Rf /home/vagrant/.kube
+  sudo rm -Rf /root/.aws
+  sudo rm -Rf /root/.kube
 }
 
 if [[ "$1" == "cleanTfFiles" ]]; then
@@ -61,16 +63,19 @@ for item in $(aws ec2 describe-addresses --filters "Name=tag:Name,Values=${EKS_P
 done
 
 VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=${EKS_PROJECT}-vpc" --out=text | awk '{print $8}' | head -n 1)
+echo "VPC_ID: ${VPC_ID}"
 for elb_arn in $(aws elbv2 describe-load-balancers --output text | grep ${VPC_ID} | awk '{print $6}'); do
+    echo "elb deleting =======> ${elb_arn}"
     aws elbv2 delete-load-balancer --load-balancer-arn ${elb_arn}
 done
 
-for item in $(aws elbv2 describe-load-balancers --output text | grep 003a18fc151b39552 | awk '{print $6}'); do
+for item in $(aws elb describe-load-balancers --output text | grep ${VPC_ID} | awk '{print $6}'); do
   if [[ "$(aws elb describe-tags --load-balancer-name ${item} --output=text | grep ${EKS_PROJECT})" != "" ]]; then
     aws elb delete-load-balancer --load-balancer-name ${item}
   fi
 done
 
+aws iam delete-policy --policy-arn arn:aws:iam::${aws_account_id}:policy/AmazonEKS_EBS_CSI_Driver_Policy-${EKS_PROJECT}
 aws iam delete-policy --policy-arn arn:aws:iam::${aws_account_id}:policy/AWSLoadBalancerControllerIAMPolicy-${EKS_PROJECT}
 aws iam delete-policy --policy-arn arn:aws:iam::${aws_account_id}:policy/${EKS_PROJECT}-ecr-policy
 aws iam delete-policy --policy-arn arn:aws:iam::${aws_account_id}:policy/${EKS_PROJECT}-es-s3-policy
@@ -82,6 +87,11 @@ for role in $(aws iam list-roles --out=text | grep ${EKS_PROJECT} | awk '{print 
   aws iam delete-role --role-name ${role}
 done
 
+for allocation_id in $(aws ec2 describe-addresses --query 'Addresses[?AssociationId==null]' \
+      | grep ${EKS_PROJECT} -B 7 | grep AllocationId | awk '{print $2}' | sed "s/\"//g;s/,//g"); do
+  aws ec2 release-address --allocation-id ${allocation_id}
+done
+
 ECR_REPO=$(aws ecr describe-repositories --out=text | grep ${EKS_PROJECT} | awk '{print $6}')
 S3_REPO=$(aws s3api list-buckets --query "Buckets[].Name" | grep ${EKS_PROJECT})
 
@@ -89,25 +99,38 @@ if [[ "$(aws eks describe-cluster --name ${EKS_PROJECT} | grep ${EKS_PROJECT})" 
   #terraform init
   terraform destroy -auto-approve
   if [[ $? != 0 ]]; then
+    sleep 30
+    VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=${EKS_PROJECT}-vpc" --out=text | awk '{print $8}')
     echo "terraform destroy failed, try to delete vpc ${VPC_ID} again."
     aws ec2 delete-vpc --vpc-id ${VPC_ID}
     if [[ $? != 0 ]]; then
-      echo "failed to delete vpc."
-      exit 1
+      VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=${EKS_PROJECT}-vpc" --out=text | awk '{print $8}')
+      echo "terraform destroy failed, try to delete vpc ${VPC_ID} again."
+      aws ec2 delete-vpc --vpc-id ${VPC_ID}
+      if [[ $? != 0 ]]; then
+        echo "failed to delete vpc."
+        exit 1
+      fi
     fi
   fi
 fi
+
+for item in $(eksctl get nodegroup --cluster=${EKS_PROJECT} | grep ${EKS_PROJECT} | awk '{print $2}'); do
+	eksctl delete nodegroup --cluster=${EKS_PROJECT} --name=${item} --disable-eviction
+done
+
 cleanTfFiles
 
-cd ../..
-git checkout -- local.tf
-git checkout -- workspace/base/locals.tf
+git checkout /vagrant/terraform-aws-eks/local.tf
+git checkout ${PROJECT_BASE}/locals.tf
+git checkout ${PROJECT_BASE}/variables.tf
 
 echo "
 ##[ Summary ]##########################################################
 echo "You might need to delete these resources."
 echo "VPC: ${EKS_PROJECT}-vpc"
 echo "ECR: ${ECR_REPO}"
+echo "S3 bucket: ${S3_REPO} jenkins-${EKS_PROJECT}"
 #######################################################################
 " >> /vagrant/info
 cat /vagrant/info
