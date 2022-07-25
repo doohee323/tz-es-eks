@@ -19,10 +19,23 @@
 //  key_name = aws_key_pair.main.key_name
 //  user_data = data.template_cloudinit_config.es-eks-bastion-cloudinit.rendered
 //  iam_instance_profile = aws_iam_instance_profile.bastion-es-eks-role.name
+//  disable_api_termination = true
 //  tags          = {
 //    team = "devops",
 //    Name = "${local.cluster_name}-bastion"
 //  }
+//
+////  root_block_device {
+////    tags                  = {}
+////    volume_type           = "gp3"
+////    volume_size           = 50
+////  }
+////
+////  ebs_block_device {
+////    device_name = "/dev/sda1"
+//////    volume_type = "gp2"
+////    volume_size = 50
+////  }
 //  provisioner "file" {
 //    source      = "../../resource"
 //    destination = "/home/ubuntu/resources"
@@ -34,7 +47,7 @@
 //    }
 //  }
 //}
-//
+
 //resource "aws_ebs_volume" "es-eks-bastion-data" {
 //  availability_zone = "${local.region}a"
 //  size              = 100

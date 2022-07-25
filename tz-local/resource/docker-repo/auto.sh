@@ -14,7 +14,7 @@ kubectl apply -f https://raw.githubusercontent.com/alexellis/registry-creds/mast
 
 export DOCKER_USERNAME=tzdevops
 export PW=${admin_password}
-export EMAIL=devops@tz.gg
+export EMAIL=devops@tz.com
 
 kubectl create secret docker-registry tz-registrykey \
   --namespace kube-system \

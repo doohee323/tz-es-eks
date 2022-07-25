@@ -25,10 +25,10 @@ mkdir -p ~/.docker
 
 #sudo vi /etc/docker/daemon.json
 #{
-#  "insecure-registries":["harbor.default.eks-main-k.tztest.com"]
+#  "insecure-registries":["harbor.default.es-eks-k.tztest.com"]
 #}
 #sudo systemctl restart docker
-#docker login harbor.default.eks-main-k.tztest.com -u="admin" -p="${admin_password}"
+#docker login harbor.default.es-eks-k.tztest.com -u="admin" -p="${admin_password}"
 
 docker login -u="tzdevops" -p="${admin_password}"
 

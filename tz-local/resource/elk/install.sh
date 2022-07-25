@@ -68,7 +68,7 @@ k patch statefulset/elasticsearch-data -p '{"spec": {"template": {"spec": {"node
 kubectl rollout restart statefulset.apps/elasticsearch-data -n ${NS}
 
 #kubectl -n ${NS} port-forward svc/elasticsearch-master 9200
-#curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.eks-main.tztest.com
+#curl --insecure -v -u elastic:wPFNxwADbRtvMp6HYdlI https://es.elk.es-eks.tztest.com
 
 sleep 60
 
@@ -191,7 +191,7 @@ POST _xpack/watcher/watch/_execute
     "actions": {
       "email": {
         "email": {
-          "to": "devops@tz.gg",
+          "to": "devops@tz.com",
           "subject": "subject11",
           "body": {
             "html": "HTML22222"

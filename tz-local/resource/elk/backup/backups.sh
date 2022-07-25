@@ -3,7 +3,7 @@
 # apt install awscli
 # preparation 1) make s3 auth
 # aws configure
-# AWS Access Key ID [None]: AKIATEMCRY56FRXPNTG6
+# AWS Access Key ID [None]: AKIAJSLFJ2UZND352MYQ
 # AWS Secret Access Key [None]: xxxxx
 #
 # vi /root/.aws/config
@@ -13,7 +13,7 @@
 #
 # vi /root/.aws/credentials
 # [default]
-# aws_access_key_id = AKIATEMCRY56FRXPNTG6
+# aws_access_key_id = AKIAJSLFJ2UZND352MYQ
 # aws_secret_access_key = xxxxx
 
 # preparation 2) add repo path in elasticsearch.yml 

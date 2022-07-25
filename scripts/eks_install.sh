@@ -201,8 +201,8 @@ if [ ! -f "${PROJECT_BASE}/terraform.tfstate" ]; then
 #  cluster_autoscaler_role=$(terraform output | grep cluster_autoscaler_role | awk '{print $3}')
 #  echo cluster_autoscaler_role: ${cluster_autoscaler_role}
 
-  sed -i "s/eks-main_role/${cluster_iam_role}/g" ${PROJECT_BASE}/locals.tf
-  sed -i "s/eks-main_role/${cluster_iam_role}/g" ${PROJECT_BASE}/variables.tf
+  sed -i "s/es-eks_role/${cluster_iam_role}/g" ${PROJECT_BASE}/locals.tf
+  sed -i "s/es-eks_role/${cluster_iam_role}/g" ${PROJECT_BASE}/variables.tf
 
   cp lb2.tf_ori lb2.tf
 

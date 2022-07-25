@@ -140,7 +140,7 @@ xpack.notification.email.account:
       starttls.enable: true
       host: smtp.gmail.com
       port: 587
-      user: devops@tz.gg
+      user: devops@tz.com
 
 xpack.notification.slack:
   account:

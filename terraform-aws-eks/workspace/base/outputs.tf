@@ -36,9 +36,19 @@ output "worker_groups_role" {
   value       = module.eks.worker_iam_role_arn
 }
 
+output "cluster_iam_role_arn" {
+  description = "Outputs EKS cluster role"
+  value       = module.eks.cluster_iam_role_arn
+}
+
 output "cluster_autoscaler_role" {
   description = "Outputs cluster_autoscaler_role"
-  value       = module.iam_assumable_role_admin.this_iam_role_arn
+  value       = module.iam_assumable_role_admin.iam_role_arn
+}
+
+output "vpc_cidr_block" {
+  description = "Outputs vpc_cidr_block"
+  value       = module.vpc.vpc_cidr_block
 }
 
 //output "es-eks-bastion" {

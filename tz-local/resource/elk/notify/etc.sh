@@ -46,7 +46,7 @@ xpack.notification.email.account:
         starttls.enable: true
         host: smtp.gmail.com
         port: 587
-        user: devops@tz.gg
+        user: devops@tz.com
 
 /usr/share/elasticsearch/bin/elasticsearch-keystore list 
 
@@ -65,7 +65,7 @@ POST _watcher/watch/_execute
     "actions": {
       "send_email": {
         "email": {
-          "to": "devops@tz.gg",
+          "to": "devops@tz.com",
           "subject": "subject11",
           "body": {
             "html": "HTML22222"
@@ -146,7 +146,7 @@ PUT /_cluster/settings
             "account": {
                 "elastic": {
                     "profile": "gmail",
-                    "email_defaults.from": "devops@tz.gg",
+                    "email_defaults.from": "devops@tz.com",
                     "smtp": {
                         "auth": true,
                         "starttls": {
@@ -155,7 +155,7 @@ PUT /_cluster/settings
                         },
                         "host": "smtp.gmail.com",
                         "port": "587",
-                        "user": "devops@tz.gg"
+                        "user": "devops@tz.com"
                     }
                 }
             }

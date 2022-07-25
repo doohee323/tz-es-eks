@@ -107,7 +107,7 @@ export CERT_MANAGER_AWS_SECRET_ACCESS_KEY_BASE64=$(echo -n "$CERT_MANAGER_AWS_SE
 echo ${CERT_MANAGER_AWS_SECRET_ACCESS_KEY_BASE64}
 
 cp letsencrypt-prod.yaml letsencrypt-prod.yaml_bak
-sed -i "s|your_email|devops@tz.gg|g" letsencrypt-prod.yaml_bak
+sed -i "s|your_email|devops@tz.com|g" letsencrypt-prod.yaml_bak
 sed -i "s|eks_domain|${eks_domain}|g" letsencrypt-prod.yaml_bak
 sed -i "s|eks_project|${eks_project}|g" letsencrypt-prod.yaml_bak
 sed -i "s|AWS_REGION|${AWS_REGION}|g" letsencrypt-prod.yaml_bak
